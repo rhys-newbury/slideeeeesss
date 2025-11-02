@@ -88,6 +88,11 @@ style: |
       margin:0 auto;
       width: 30% !important;
     }        
+    img[alt="graspd"] {
+      display:block;
+      margin:0 auto;
+      width: 30% !important;
+    }        
 
 
 ---
@@ -205,11 +210,36 @@ section li {
 
 ![latent](latent.png)
 
+
+---
+
+# How do others find Keypoints?
+<style scoped>
+section p {
+  font-size: small
+}
+section li {
+  font-size: smaller !important
+}
+</style>
+
+- KeypointDeformer (Jakab et al., 2021) is a cage-based model that learns semantically consistent 3D keypoints via a differentiable mesh deformation
+- Key-Grid  (Hou et al., 2024) introduces a grid-based heatmap decoder in an autoencoder framework to encourage semantically consistent keypoints across objects.
+- Skeleton Merger (Shi et al., 2021) builds a skeletal graph by predicting keypoints as nodes and their connections as edges, and uses this skeleton to reconstruct the 3D object
+- SC3K (Zohaib & Del Bue, 2023) enforces cycle-consistency by comparing keypoints from multiple randomly rotated views of the same object, ensuring the keypoints remain semantically stable for each object instance
+
+
+Hou, C., Xue, Z., Zhou, B., Ke, J., Shao, L., & Xu, H. (2024). Key-Grid: Unsupervised 3D keypoints detection using grid heatmap features. In Proceedings of the 38th Conference on Neural Information Processing Systems (NeurIPS 2024)
+Jakab, T., Tucker, R., Makadia, A., Wu, J., Snavely, N., & Kanazawa, A. (2021). KeypointDeformer: Unsupervised 3D keypoint discovery for shape control. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR 2021)
+Shi, R., Xue, Z., You, Y., & Lu, C. (2021). Skeleton Merger: An unsupervised aligned keypoint detector. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR 2021)
+Zohaib, M., & Del Bue, A. (2023). SC3K: Self-supervised and coherent 3D keypoints estimation from rotated, noisy, and decimated point cloud data. In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV 2023)
+
+
 ---
 
 # Network Overview
 
-We learn 3D keypoints end-to-end from point clouds using an **autoencoder** network through, using **diffusion-based** reconstruction as an auxilary task
+We learn 3D keypoints end-to-end from point clouds using an **autoencoder** network through, using **diffusion-based** reconstruction as an auxilary task.
 
 ![approach](output.gif)
 
@@ -313,9 +343,9 @@ and two reconstruction based metrics:
 
 | Model | DAS ↑ | CD ↓ | EMD ↓ | Notes |
 |--------|-------|------|-------|-------|
-| KPD | 0.72 | 0.015 | 1.5e−5 | baseline deformation model |
-| DPM | 0.73 | 0.012 | 1.3e−5 | diffusion baseline |
-| **Ours** | **0.78** | **0.0081** | **1.14e−5** | best correlation and fidelity |
+| KPD | 0.72 | 0.015 | 1.5e−5 | Baseline deformation model |
+| DPM | 0.73 | 0.012 | 1.3e−5 | Diffusion baseline |
+| **Ours** | **0.78** | **0.0081** | **1.14e−5** | Best correlation and fidelity |
 
 - Our model achieves **??% higher keypoint correlation** and **??% lower reconstruction error** compared to SOTA
 
@@ -333,9 +363,31 @@ We explore how **interpolation in latent space** correspond to **continuous chan
 
 # Grasp Transfer via Keypoint Correspondence and Differentiable Simulation
 
-1) Extract 3D keypoints on both canonical and target objects  ![](https://icongr.am/material/check-bold.svg?color=80EF80)
-2) Transfer keypoints from the canonical object to the target instance via the keypoint space.
-3) Jointly optimize the robot’s hand configuration and grasp stability through differentiable physics simulation, aligning fingertips with the transferred keypoints. ![](https://icongr.am/material/check-bold.svg?color=80EF80)
+
+
+
+- ![1](https://icongr.am/material/numeric-1-circle.svg?color=80EF80 'step') Extract 3D keypoints on both canonical and target objects
+- ![3](https://icongr.am/material/numeric-2-circle.svg?color=FFC067 'step') Transfer keypoints from the canonical object to the target instance via the keypoint space.
+- ![3](https://icongr.am/material/numeric-3-circle.svg?color=80EF80 'step') Jointly optimize the robot’s hand configuration and grasp stability through differentiable physics simulation, aligning fingertips with the transferred keypoints.
+
+---
+
+## Background: Grasping via Differentiable Simulation
+
+<style scoped>
+
+section p {
+  font-size: small;
+}
+</style>
+
+
+- Differentiable simulation approach: Fast-Grasp’D (Turpin et al., 2023) makes the grasping simulation (incl. contact physics) differentiable, enabling gradient-based optimization of multi-finger grasps
+- Uses gradient descent on a grasp stability objective within the differentiable simulator to synthesize contact-rich grasps, optimize finger joint angles until a high-quality grasp is found.
+
+![graspd](graspd.png)
+
+D. Turpin et al., "Fast-Grasp'D: Dexterous Multi-finger Grasp Generation Through Differentiable Simulation," 2023 IEEE International Conference on Robotics and Automation (ICRA), London, United Kingdom, 2023, pp. 8082-8089, doi: 10.1109/ICRA48891.2023.10160314.
 
 ---
 
@@ -360,7 +412,7 @@ We explore how **interpolation in latent space** correspond to **continuous chan
 
 ## Paper Submission Plan
 
-All works I am **first author** and have contributed **more then 50%**. 
+All works I am **first author** and have contributed **more than 50%**. 
 
 These works will make up a majority of my thesis. 
 <style scoped>
@@ -393,7 +445,7 @@ I have also contributed to these works during my thesis, however, they will not 
 ![timeline](timeline.png)
 
 --- 
-# Thankyou for listening!
+# Thank you for listening!
 
 ## Questions?
 
