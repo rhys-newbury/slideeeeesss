@@ -225,7 +225,7 @@ section li {
 
 - KeypointDeformer (Jakab et al., 2021) is a cage-based model that learns semantically consistent 3D keypoints via a differentiable mesh deformation
 - Key-Grid  (Hou et al., 2024) introduces a grid-based heatmap decoder in an autoencoder framework to encourage semantically consistent keypoints across objects.
-- Skeleton Merger (Shi et al., 2021) builds a skeletal graph by predicting keypoints as nodes and their connections as edges, and uses this skeleton to reconstruct the 3D object
+- Skeleton Merger (SM) (Shi et al., 2021) builds a skeletal graph by predicting keypoints as nodes and their connections as edges, and uses this skeleton to reconstruct the 3D object
 - SC3K (Zohaib & Del Bue, 2023) enforces cycle-consistency by comparing keypoints from multiple randomly rotated views of the same object, ensuring the keypoints remain semantically stable for each object instance
 
 
@@ -234,6 +234,25 @@ Jakab, T., Tucker, R., Makadia, A., Wu, J., Snavely, N., & Kanazawa, A. (2021). 
 Shi, R., Xue, Z., You, Y., & Lu, C. (2021). Skeleton Merger: An unsupervised aligned keypoint detector. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR 2021)
 Zohaib, M., & Del Bue, A. (2023). SC3K: Self-supervised and coherent 3D keypoints estimation from rotated, noisy, and decimated point cloud data. In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV 2023)
 
+---
+
+# Background: Diffusion Models
+
+<style scoped>
+section p {
+  font-size: small
+}
+</style>
+
+
+- Diffusion models are generative frameworks that learn to reverse a gradual noising process, transforming pure noise into structured data through step-wise denoising.
+- In the forward process, noise is incrementally added to data until it becomes random; the reverse process learns to remove this noise to recover the original structure.
+- Karras et al. (2022) introduced the Elucidated Diffusion Models (EDM) approach, simplifying diffusion model design via optimized noise schedules and network conditioning, achieving state-of-the-art image generation quality with significantly faster sampling
+- DPM (Luo & Hu, 2021) adapts this idea to point clouds by modeling 3D points as particles in a heat bath and conditioning the reverse process on a shape latent to generate diverse 3D shapes.
+
+
+Karras, T., Aittala, M., Aila, T., & Laine, S. (2022). Elucidating the design space of diffusion-based generative models. Advances in Neural Information Processing Systems, 36 (NeurIPS 2022).
+Luo, D., & Hu, R. (2021). Diffusion probabilistic models for 3D point cloud generation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) (pp. 2837–2845). 
 
 ---
 
@@ -327,7 +346,7 @@ Performance is measured via, two keypoint metrics:
 and two reconstruction based metrics:
 
 - **Chamfer Distance (CD)** and **Earth Mover’s Distance (EMD)** — reconstruction quality  
-- **Minimum Matching Distance (MMD)-CD / MMD-EMD** — generative quality.
+- **Minimum Matching Distance (MMD)-CD** — generative quality.
 
 --- 
 
@@ -341,13 +360,13 @@ and two reconstruction based metrics:
 
 # Quantitative Evaluation
 
-| Model | DAS ↑ | CD ↓ | EMD ↓ | Notes |
-|--------|-------|------|-------|-------|
-| KPD | 0.72 | 0.015 | 1.5e−5 | Baseline deformation model |
-| DPM | 0.73 | 0.012 | 1.3e−5 | Diffusion baseline |
-| **Ours** | **0.78** | **0.0081** | **1.14e−5** | Best correlation and fidelity |
+| Metric | KPD | KeyGrid | KeyGridOrig | SC3K | SM | **Ours** |
+|---------|-----|----------|--------------|------|----|-----------|
+| **DAS (↑)** | 0.69 ± 0.13 | 0.63 ± 0.10 | 0.67 ± 0.12 | 0.62 ± 0.033 | 0.72 ± 0.13 | **0.79 ± 0.077** |
+| **Correspondence (↑)** | 0.69 ± 0.16 | 0.93 ± 0.038 | 0.92 ± 0.047 | 0.90 ± 0.04 | 0.91 ± 0.031 | **0.98 ± 0.019** |
 
-- Our model achieves **??% higher keypoint correlation** and **??% lower reconstruction error** compared to SOTA
+
+- Our model achieves SOTA results on both DAS and Correspondence
 
 ---
 # Latent Space Interpolation
@@ -428,12 +447,12 @@ section ul {
 - **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kuli´c, D. (2025). KeyPointDiffuser: Unsupervised 3D keypoint learning via latent diffusion models. Manuscript to be submitted for publication. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) 2026.
 - **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kuli´c, D. (2025). Grasp transfer via keypoint correspondence and differentiable simulation. Manuscript in preparation.
 
-I have also contributed to these works during my thesis, however, they will not be included:
+<!-- I have also contributed to these works during my thesis, however, they will not be included:
 
 - Schwartz, J., **Newbury, R**., Kulić, D., & Kurniawati, H. (2025). POSGGym: A library for decision-theoretic planning and learning in partially observable, multi-agent environments. Autonomous Agents and Multi-Agent Systems, 39(2), 35. Springer US.
 - Ferenczi, B., **Newbury, R**., Burke, M., & Drummond, T. (2024). Carefully structured compression: Efficiently managing StarCraft II data. arXiv preprint arXiv:2410.08659.
 - Gupta, M., Bhowmick, D., **Newbury, R**., Saberi, M., Pan, S., & Beck, B. (2025). INSPIRE-GNN: Intelligent sensor placement to improve sparse bicycling network prediction via reinforcement learning boosted graph neural networks. arXiv preprint arXiv:2508.00141.
-- Zhang, J., **Newbury, R**., Zhang, X., Tran, T., Kulić, D., & Burke, M. (2025). Why heuristic weighting works: A theoretical analysis of denoising score matching. arXiv preprint arXiv:2508.01597.
+- Zhang, J., **Newbury, R**., Zhang, X., Tran, T., Kulić, D., & Burke, M. (2025). Why heuristic weighting works: A theoretical analysis of denoising score matching. arXiv preprint arXiv:2508.01597. -->
 
 ---
 
