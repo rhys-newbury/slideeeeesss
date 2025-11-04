@@ -71,7 +71,7 @@ style: |
       img[alt="demo"] {
       display:block;
       margin:0 auto;
-      width: 40% !important;
+      width: 30% !important;
     }       
     img[alt="brr"] {
       display:block;
@@ -100,7 +100,7 @@ style: |
 # Final Review Presentation
 ## Learning to Manipulate from Minimal Supervision
 ### Rhys Newbury
-
+## Supervisors: Professor Dana Kulić, Professor Hanna Kurniawati, and Dr Akansel Cosgun
 
 ---
 
@@ -258,7 +258,7 @@ Luo, D., & Hu, R. (2021). Diffusion probabilistic models for 3D point cloud gene
 
 # Network Overview
 
-We learn 3D keypoints end-to-end from point clouds using an **autoencoder** network through, using **diffusion-based** reconstruction as an auxilary task.
+We learn 3D keypoints end-to-end from point clouds using an **autoencoder** network through, using **diffusion-based** reconstruction as an auxilary task. 
 
 ![approach](output.gif)
 
@@ -314,17 +314,17 @@ section table {
 
 | Term | Purpose |
 |------|----------|
-| $L_{diff}$ | Chamfer distance between ground truth and denoised input |
-| $L_{chamfer}$ | Keypoint proximity to shape |
-| $L_{KL}$ | Regularize auxiliary latent |
-| $L_{FPS}$ | Ensure keypoint coverage by aligning against furthest point sampling |
-| <span style="view-transition-name:mse;">$L_{mse}$</span>  | Deformation consistency |
+| $\mathcal{L}_{diff}$ | Chamfer distance between ground truth and denoised input |
+| $\mathcal{L}_{chamfer}$ | Keypoint proximity to shape |
+| $\mathcal{L}_{KL}$ | Regularize auxiliary latent |
+| $\mathcal{L}_{FPS}$ | Ensure keypoint coverage by aligning against furthest point sampling |
+| <span style="view-transition-name:mse;">$\mathcal{L}_{mse}$</span>  | Deformation consistency |
 
 Together they align the latent space with an **ELBO**-like objective, ensuring both fidelity and interpretability.
 
 ---
 
-# <span style="view-transition-name:mse;">$L_{mse}$</span>
+# <span style="view-transition-name:mse;">$\mathcal{L}_{mse}$</span>
 
 ### Deformation Consistency Loss
 
@@ -332,6 +332,21 @@ Together they align the latent space with an **ELBO**-like objective, ensuring b
 - This should encourage stable keypoints between inputs.
 
 ![mse](mse.png)
+
+---
+
+# Improved Chamfer-based Diffusion Loss ($\mathcal{L}_{diff}$)
+
+$$
+\mathcal{L}_{\text{CD}}(\hat{S}, S_0)
+=
+\alpha \, d_{\text{CD}}(\hat{S} \rightarrow S_0)
+\;+\;
+\beta \, d_{\text{CD}}(S_0 \rightarrow \hat{S}),
+$$
+
+- The intuition is first term is precision, second term is coverage
+- We set $\beta > \alpha$ to encourage coverage.
 
 ---
 
@@ -411,15 +426,24 @@ D. Turpin et al., "Fast-Grasp'D: Dexterous Multi-finger Grasp Generation Through
 ---
 
 ## What is done.
+<style scoped>
+
+section p {
+  font-size: small;
+}
+</style>
 
 - Can transfer grasp using keypoints from human to robot on *same object instance*
-- We use the differentiable simulation engine Warp
+- Achieved using a hungarian matching based loss term to assign fingers to keypoints.
+- We use the differentiable simulation engine Warp (Macklin, 2022)
 
 ![demo](demo.gif)
 
+<p>M. Macklin, “Warp: A high-performance python framework for gpu simulation and graphics,” in NVIDIA
+GPU Technology Conference (GTC), vol. 3, 2022.</p>
 
 ---
-## What is left.
+## What is left?
 
 - Combine with the keypoint discovery to enable grasp transfer across object instances within a class.
 - Conduct systematic simulation studies across YCB categories.
@@ -437,15 +461,15 @@ These works will make up a majority of my thesis.
 <style scoped>
 
 section ul {
-  font-size: small;
+  font-size: smaller;
 }
 </style>
 
 - **Newbury, R.**, Gu, M., Chumbley, L., Mousavian, A., Eppner, C., Leitner, J., Bohg, J., Morales, A., Asfour, T., Kragic, D., Fox, D., & Cosgun, A. (2023). Deep learning approaches to grasp synthesis: A review. IEEE Transactions on Robotics
-- **Newbury, R.**, Schwartz, J., Kurniawati, H., & Kuli´c, D. (2025). Reinforcement learning for parameter-uncertain robotic manipulators. In Proceedings of the Australasian Conference on Robotics and Automation (ACRA). Australasian Robotics and Automation Association.
-- **Newbury, R.**, Kurniawati, H., & Kuli´c, D. (2025). Transferring policies across different kinematic and dynamic configurations via state-matching. Manuscript submitted for publication. IEEE Robotics and Automation Letters (RAL).
-- **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kuli´c, D. (2025). KeyPointDiffuser: Unsupervised 3D keypoint learning via latent diffusion models. Manuscript to be submitted for publication. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) 2026.
-- **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kuli´c, D. (2025). Grasp transfer via keypoint correspondence and differentiable simulation. Manuscript in preparation.
+- **Newbury, R.**, Schwartz, J., Kurniawati, H., & Kulić , D. (2025). Reinforcement learning for parameter-uncertain robotic manipulators. In Proceedings of the Australasian Conference on Robotics and Automation (ACRA). Australasian Robotics and Automation Association.
+- **Newbury, R.**, Kurniawati, H., & Kulić , D. (2025). Transferring policies across different kinematic and dynamic configurations via state-matching. Manuscript submitted for publication. IEEE Robotics and Automation Letters (RAL).
+- **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kulić , D. (2025). KeyPointDiffuser: Unsupervised 3D keypoint learning via latent diffusion models. Manuscript to be submitted for publication. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) 2026.
+- **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kulić , D. (2025). Grasp transfer via keypoint correspondence and differentiable simulation. Manuscript in preparation.
 
 <!-- I have also contributed to these works during my thesis, however, they will not be included:
 
