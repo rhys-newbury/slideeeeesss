@@ -612,6 +612,7 @@ section p {
 <div style="display:flex; justify-content:center; align-items:center;">
 <img src="contact_area.png" height="230">
 </div>
+
 ---
 
 ## What is left?
@@ -642,12 +643,6 @@ section ul {
 - **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kulić , D. (2025). KeyPointDiffuser: Unsupervised 3D keypoint learning via latent diffusion models. Manuscript to be submitted for publication. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) 2026.
 - **Newbury, R.**, Zhang, J., Tran, T., Kurniawati, H., & Kulić , D. (2025). Grasp transfer via keypoint correspondence and differentiable simulation. Manuscript in preparation.
 
-<!-- I have also contributed to these works during my thesis, however, they will not be included:
-
-- Schwartz, J., **Newbury, R**., Kulić, D., & Kurniawati, H. (2025). POSGGym: A library for decision-theoretic planning and learning in partially observable, multi-agent environments. Autonomous Agents and Multi-Agent Systems, 39(2), 35. Springer US.
-- Ferenczi, B., **Newbury, R**., Burke, M., & Drummond, T. (2024). Carefully structured compression: Efficiently managing StarCraft II data. arXiv preprint arXiv:2410.08659.
-- Gupta, M., Bhowmick, D., **Newbury, R**., Saberi, M., Pan, S., & Beck, B. (2025). INSPIRE-GNN: Intelligent sensor placement to improve sparse bicycling network prediction via reinforcement learning boosted graph neural networks. arXiv preprint arXiv:2508.00141.
-- Zhang, J., **Newbury, R**., Zhang, X., Tran, T., Kulić, D., & Burke, M. (2025). Why heuristic weighting works: A theoretical analysis of denoising score matching. arXiv preprint arXiv:2508.01597. -->
 
 ---
 
@@ -659,18 +654,30 @@ section ul {
 ![timeline](timeline.png)
 
 --- 
-# Thank you for listening!
+<!-- # Thank you for listening!
 
-## Questions?
+## Questions? -->
 
 <style scoped>
 
 section ul {
   font-size: small;
 }
+table {
+  border: none;
+  border-collapse: collapse;
+  width: 100%;
+}
+td, th {
+  border: none !important;
+  background: none !important;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0px;
+}
 </style>
 
-### **Thesis Contributions**
+<!-- ### **Thesis Contributions**
 - Cross-embodiment **policy transfer** without explicit kinematic knowledge  
 - **Single-demonstration** imitation and transfer framework across embodiments  
 - **Unsupervised keypoint learning** for 3D object understanding  
@@ -680,6 +687,43 @@ section ul {
 - Integration of keypoint discovery with grasp transfer  
 - Simulation studies on YCB categories  
 - Real-world robotic validation  
+
+
+
+
+| ![brr](car.png) | ![brr](chair.png) |
+|:----------------:|:------------------:|
+| ![brr](plane.png) | ![brr](guitar.png) | -->
+
+<div style="display:flex; gap:20px; max-width:90%;">
+
+<!-- Text -->
+<div style="flex:2;">
+<h1>Thank you for listening!</h1>
+<h2>Questions?</h2>
+
+### Thesis Contributions
+- Cross-embodiment **policy transfer** without kinematics  
+- **Single-demo** imitation & transfer  
+- **Unsupervised 3D keypoints** for object understanding  
+- **Single-demo grasp transfer** via keypoints + differentiable sim  
+
+### Ongoing Work
+- Keypoints + grasp transfer  
+- YCB simulation studies  
+- Real-robot validation  
+
+</div>
+
+<!-- Images -->
+<div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+  <img src="car.png"/>
+  <img src="chair.png"/>
+  <img src="plane.png"/>
+  <img src="guitar.png"/>
+</div>
+
+</div>
 
 
 ---
@@ -1031,6 +1075,117 @@ td, th {
 </style>
 
 
+
 | ![brr](car.png) | ![brr](chair.png) |
 |:----------------:|:------------------:|
 | ![brr](plane.png) | ![brr](guitar.png) |
+
+
+---
+
+## Appendix: Force Closure
+
+<style scoped>
+
+section ul, p, ol, table {
+  font-size: small;
+}
+</style>
+
+Force closure means a grasp can resist **any external force or torque** acting on the object. i.e., A force-closure grasp can counter **any push, pull, twist, or external disturbance**.
+
+
+### Mathematical Definition
+
+Let:
+
+- $\mathbf{f}_i$ = force applied at contact $i$
+- $\mathbf{p}_i$ = contact point
+- $\mathbf{p}_c$ = object center
+- Torque from contact $i$:  
+  $$
+  \mathbf{t}_i = (\mathbf{p}_i - \mathbf{p}_c) \times \mathbf{f}_i
+  $$
+- Wrench (force + torque):  
+  $$
+  \mathbf{w}_i = \begin{bmatrix} \mathbf{f}_i \\ \mathbf{t}_i \end{bmatrix}
+  $$
+
+A grasp has **force closure** if feasible contact wrenches can span the full 6-D wrench space:
+
+$$
+\text{cone}(\{\mathbf{w}_i\}) = \mathbb{R}^6
+$$
+
+Equivalently, for any external wrench $\mathbf{w}_{ext}$, there exist forces inside the friction cones such that:
+
+$$
+G \mathbf{f} = -\mathbf{w}_{ext}
+$$
+
+where $G$ is the grasp map, which converts **forces applied at the fingers** into the **resulting force and torque** on the object.
+
+---
+
+### Intuition
+
+- The hand can **push back in any direction** and resist twisting.
+- Friction and contact geometry together give full control.
+- If the object is bumped, pulled, or gravity changes direction, the grasp still holds.
+
+
+
+---
+
+## Appendix — Ferrari–Canny Grasp Metric
+
+<style scoped>
+
+section ul, p, ol, table {
+  font-size: small;
+}
+</style>
+
+The Ferrari–Canny metric measures **how robust a grasp is** by quantifying the smallest external wrench the grasp can resist.
+
+#### Definition
+
+Given a set of feasible contact wrenches $\mathcal{W}$ (from friction cones), the Ferrari–Canny quality $Q$ is:
+
+$$
+Q = \min_{\mathbf{w} \in \mathbb{R}^6, \|\mathbf{w}\| = 1}
+\max_{\mathbf{g} \in \mathcal{W}} \mathbf{g}^\top \mathbf{w}
+$$
+
+Equivalently:
+
+> $Q$ is the radius of the largest ball centered at the origin that fits inside the convex hull of feasible wrenches.
+
+Higher $Q$ → more robust to disturbances.
+
+
+### Intuition#
+
+- Measures **worst-case robustness** of a grasp.
+- Think of pushing the object from **the weakest direction** — how much force can the hand resist?
+- Geometric view: if the convex hull of contact wrenches surrounds the origin with a large margin, the grasp is strong.
+
+
+---
+
+## Appendix: Other contributed works
+
+<style scoped>
+
+section ul, p, ol, table {
+  font-size: small;
+}
+</style>
+
+
+I have also contributed to these works during my thesis, however, they will not be included:
+
+- Schwartz, J., **Newbury, R**., Kulić, D., & Kurniawati, H. (2025). POSGGym: A library for decision-theoretic planning and learning in partially observable, multi-agent environments. Autonomous Agents and Multi-Agent Systems, 39(2), 35. Springer US.
+- Ferenczi, B., **Newbury, R**., Burke, M., & Drummond, T. (2024). Carefully structured compression: Efficiently managing StarCraft II data. arXiv preprint arXiv:2410.08659.
+- Gupta, M., Bhowmick, D., **Newbury, R**., Saberi, M., Pan, S., & Beck, B. (2025). INSPIRE-GNN: Intelligent sensor placement to improve sparse bicycling network prediction via reinforcement learning boosted graph neural networks. arXiv preprint arXiv:2508.00141.
+- Zhang, J., **Newbury, R**., Zhang, X., Tran, T., Kulić, D., & Burke, M. (2025). Why heuristic weighting works: A theoretical analysis of denoising score matching. arXiv preprint arXiv:2508.01597.
