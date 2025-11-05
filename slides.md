@@ -44,6 +44,13 @@ style: |
       width: 80% !important;
     }    
 
+    img[alt="ca"] {
+      display:block;
+      margin:0 auto;
+      width: 30% !important;
+    }    
+
+
     img[alt="approach"] {
       display:block;
       margin:0 auto;
@@ -92,9 +99,34 @@ style: |
       display:block;
       margin:0 auto;
       width: 30% !important;
+    }      
+
+    img[alt="graph"] {
+      display:block;
+      margin:0 auto;
+      width: 50% !important;
+    }      
+    img[alt="google"] {
+      display:block;
+      margin:0 auto;
+      width: 30% !important;
     }        
 
+    /* Mark exactly ONE element per slide with the same view-transition-name */
+    .diagram {
+      /* This name must be unique-per-element but identical across the two slides */
+      view-transition-name: diagram;
+      display: block;
+      margin: 0 auto;
+      /* Optional: let the browser do a subtle zoom/position ease */
+      contain: layout paint; /* helps perf */
+    }
 
+    /* Optional: a couple of sizes/positions to show the morph clearly */
+    .w-70 { width: 70%; }
+    .w-45 { width: 45%; }
+    .mt-0 { margin-top: 0; }
+    .mt-6 { margin-top: 6vh; }
 ---
 
 # Final Review Presentation
@@ -113,19 +145,44 @@ The overarching goal is to develop **learning frameworks** that enable **efficie
 ---
 
 
-# Research Focus
+# Research Contributions
 
-During this thesis, we tackle three core challenges:
+<style scoped>
+ul {
+  list-style: none;
+  padding-left: 0;   /* remove indent */
+  margin-left: 0;
+  font-size: smaller
+}
+li::before {
+  content: "";       /* stop default bullets from appearing */
+}
+p {
+    font-size: smaller
+}
+</style>
 
-- ![1](https://icongr.am/material/numeric-1-circle.svg?color=80EF80 'step') **Unknown Embodiments** — generalizing across unknown robot morphologies ![](https://icongr.am/material/check-bold.svg?color=80EF80)
-- ![2](https://icongr.am/material/numeric-2-circle.svg?color=80EF80 'step') **Trajectory Imitation** — transferring across embodiments from <em>a single demo</em> ![](https://icongr.am/material/check-bold.svg?color=80EF80) 
-- ![3](https://icongr.am/material/numeric-3-circle.svg?color=FFC067 'step') **Grasp Imitation** — Learning grasping skills for a class of objects from <em>a single demo</em>.
+- ![1](https://icongr.am/material/numeric-1-circle.svg?color=80EF80 'step') **Unknown Embodiments** — Design an RL algorithm robust across a family of unknown robot morphologies 
+- ![2](https://icongr.am/material/numeric-2-circle.svg?color=80EF80 'step') **Trajectory Imitation** — Develop an approach which can transfer across embodiments from <em>a single demo</em>
+- ![3](https://icongr.am/material/numeric-3-circle.svg?color=FFC067 'step') **Grasp Imitation** — Propose an approach to learn a grasping policy for a class of objects from <em>a single demo</em>.
 
 
 All share a common theme:  
 → **Learning from limited data** while maintaining **broad generalization** across embodiments.
 
+<!-- ![brax](brax.png)
+![rl](rl.png)
+![plane](plane.png) -->
+
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="rl.png" alt="rl" style="width:23%;">
+  <img src="brax.png" alt="brax" style="width:23%;">
+  <img src="plane copy.png" alt="plane2" style="width:23%;">
+</div>
+
+
 ---
+<!-- _transition: none -->
 
 # ![3](https://icongr.am/material/numeric-3-circle.svg?color=FFC067 'step') Single-Demo Grasp Learning
 
@@ -135,9 +192,38 @@ All share a common theme:
 - Robots struggle with this: transferring a grasp from one object to another often needs retraining or large dataset.  
 - We aim to **enable grasp transfer** between novel objects using **only one demonstration**.
 
-
+![google](google.webp)
+*Google collect a dataset of 800,000 grasps, and still cannot 100% successfully grasp new objects*
 
 --- 
+
+<!-- _transition: none -->
+
+# High-Level Grasping Pipeline
+
+<img class="diagram w-70 mt-0" src="overview1.png" alt="Overview A">
+
+**Pipeline Overview**
+1. **Input:** Single grasp demonstration on canonical object  
+2. **Learned Keypoints:** Extract consistent 3D keypoints across shapes  
+3. **Optimization:** Align robot fingertips to keypoints via differentiable simulation  
+
+---
+
+<!-- _transition: none -->
+
+
+# High-Level Grasping Pipeline
+
+<img class="diagram w-70 mt-0" src="overview2.png" alt="Overview A">
+
+**Pipeline Overview**
+1. **Input:** Single grasp demonstration on canonical object  
+2. **Learned Keypoints:** Extract consistent 3D keypoints across shapes  
+3. **Optimization:** Align robot fingertips to keypoints via differentiable simulation  
+
+---
+
 # Key Idea: Use 3D Keypoints as Semantic Anchors
 
 <style scoped>
@@ -156,18 +242,6 @@ section p {
 
 ![touchcode](touchcode.png)
 <p>T. Zhu, R. Wu, J. Hang, X. Lin and Y. Sun, "Toward Human-Like Grasp: Functional Grasp by Dexterous Robotic Hand Via Object-Hand Semantic Representation," in IEEE Transactions on Pattern Analysis and Machine Intelligence</p>
-
----
-
-
-# High-Level Grasping Pipeline
-
-![overview](overview.png)
-
-**Pipeline Overview**
-1. **Input:** Single grasp demonstration on canonical object  
-2. **Learned Keypoints:** Extract consistent 3D keypoints across shapes  
-3. **Optimization:** Align robot fingertips to keypoints via differentiable simulation  
 
 
 ---
@@ -215,18 +289,34 @@ section li {
 
 # How do others find Keypoints?
 <style scoped>
+section th {
+  font-size: small
+}
 section p {
   font-size: small
 }
-section li {
-  font-size: smaller !important
+section td {
+  font-size: small !important
+}
+table {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 </style>
 
-- KeypointDeformer (Jakab et al., 2021) is a cage-based model that learns semantically consistent 3D keypoints via a differentiable mesh deformation
+<!-- - KeypointDeformer (Jakab et al., 2021) is a cage-based model that learns semantically consistent 3D keypoints via a differentiable mesh deformation
 - Key-Grid  (Hou et al., 2024) introduces a grid-based heatmap decoder in an autoencoder framework to encourage semantically consistent keypoints across objects.
 - Skeleton Merger (SM) (Shi et al., 2021) builds a skeletal graph by predicting keypoints as nodes and their connections as edges, and uses this skeleton to reconstruct the 3D object
-- SC3K (Zohaib & Del Bue, 2023) enforces cycle-consistency by comparing keypoints from multiple randomly rotated views of the same object, ensuring the keypoints remain semantically stable for each object instance
+- SC3K (Zohaib & Del Bue, 2023) enforces cycle-consistency by comparing keypoints from multiple randomly rotated views of the same object, ensuring the keypoints remain semantically stable for each object instance -->
+
+| Method | Keypoint Discovery | Reconstruction | Conditional Generation | Unconditional Generation |
+|---|:---:|:---:|:---:|:---:|
+| KeypointDeformer (Jakab et al., 2021) | ✅ | ✅ | ✅ | ❌ |
+| Key-Grid (Hou et al., 2024) | ✅ | ✅ | ❌ | ❌ |
+| Skeleton Merger (Shi et al., 2021) | ✅ | ✅ | ❌ | ❌ |
+| SC3K (Zohaib & Del Bue, 2023) | ✅ | ❌ | ❌ | ❌ |
+| **Ours** | ✅ | ✅ | ✅ | ✅ |
 
 
 Hou, C., Xue, Z., Zhou, B., Ke, J., Shao, L., & Xu, H. (2024). Key-Grid: Unsupervised 3D keypoints detection using grid heatmap features. In Proceedings of the 38th Conference on Neural Information Processing Systems (NeurIPS 2024)
@@ -236,7 +326,7 @@ Zohaib, M., & Del Bue, A. (2023). SC3K: Self-supervised and coherent 3D keypoint
 
 ---
 
-# Background: Diffusion Models
+<!-- # Background: Diffusion Models
 
 <style scoped>
 section p {
@@ -252,15 +342,15 @@ section p {
 
 
 Karras, T., Aittala, M., Aila, T., & Laine, S. (2022). Elucidating the design space of diffusion-based generative models. Advances in Neural Information Processing Systems, 36 (NeurIPS 2022).
-Luo, D., & Hu, R. (2021). Diffusion probabilistic models for 3D point cloud generation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) (pp. 2837–2845). 
+Luo, D., & Hu, R. (2021). Diffusion probabilistic models for 3D point cloud generation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) (pp. 2837–2845).  -->
 
----
+<!-- --- -->
 
 # Network Overview
 
 We learn 3D keypoints end-to-end from point clouds using an **autoencoder** network through, using **diffusion-based** reconstruction as an auxilary task. 
 
-![approach](output.gif)
+![approach](output2.gif)
 
 
 
@@ -281,11 +371,11 @@ We learn 3D keypoints end-to-end from point clouds using an **autoencoder** netw
   style="border:none; display:block; margin:auto;"
 ></iframe> -->
 
----
+<!-- --- -->
 
 
 
-# Decoder (Diffusion-Based)
+<!-- # Decoder (Diffusion-Based)
 
 <style scoped>
 
@@ -300,7 +390,7 @@ section p {
 - Cross-attention layers to allow noisy points to align with global shape context  
 - FiLM-conditioned (Pérez et al., 2018) MLP layers adaptively denoise points
 
-<p>Pérez, E., Strub, F., de Vries, H., Dumoulin, V., & Courville, A. C. (2018). FiLM: Visual reasoning with a general conditioning layer. Proceedings of the AAAI Conference on Artificial Intelligence, 32(1).</p>
+<p>Pérez, E., Strub, F., de Vries, H., Dumoulin, V., & Courville, A. C. (2018). FiLM: Visual reasoning with a general conditioning layer. Proceedings of the AAAI Conference on Artificial Intelligence, 32(1).</p> -->
 
 ---
 
@@ -335,7 +425,7 @@ Together they align the latent space with an **ELBO**-like objective, ensuring b
 
 ---
 
-# Improved Chamfer-based Diffusion Loss ($\mathcal{L}_{diff}$)
+# Asymmetrical Chamfer-based Diffusion Loss ($\mathcal{L}_{diff}$)
 
 $$
 \mathcal{L}_{\text{CD}}(\hat{S}, S_0)
@@ -358,28 +448,28 @@ Performance is measured via, two keypoint metrics:
 - **Dual Alignment Score (DAS)** — Does it align with human *semantic keypoint labels*?
 - **Keypoint Correspondence** — Does it align with human *semantic segmentation labels*
 
-and two reconstruction based metrics:
+and we plan to do two reconstruction based metrics:
 
 - **Chamfer Distance (CD)** and **Earth Mover’s Distance (EMD)** — reconstruction quality  
 - **Minimum Matching Distance (MMD)-CD** — generative quality.
 
 --- 
 
-## Aside: Baselines do not match results
+# Aside: Baselines do not match results
 
+- One contribution of this work is a training framework that standardizes baseline implementations, ensuring consistent reproduction and comparison across baselines.
 - Baseline results reported in prior works are not directly reproducible when using their open-source implementations.
 - We observe inconsistencies between the original papers and reconstructed runs.
 - This often stems from missing implementation details.
-- One contribution of this work is a training framework that standardizes these implementations, ensuring consistent reproduction and comparison across baselines.
 ---
 
 # Quantitative Evaluation
 
-| Metric | KPD | KeyGrid | KeyGridOrig | SC3K | SM | **Ours** |
+<!-- | Metric | KPD | KeyGrid | KeyGridOrig | SC3K | SM | **Ours** |
 |---------|-----|----------|--------------|------|----|-----------|
 | **DAS (↑)** | 0.69 ± 0.13 | 0.63 ± 0.10 | 0.67 ± 0.12 | 0.62 ± 0.033 | 0.72 ± 0.13 | **0.79 ± 0.077** |
-| **Correspondence (↑)** | 0.69 ± 0.16 | 0.93 ± 0.038 | 0.92 ± 0.047 | 0.90 ± 0.04 | 0.91 ± 0.031 | **0.98 ± 0.019** |
-
+| **Correspondence (↑)** | 0.69 ± 0.16 | 0.93 ± 0.038 | 0.92 ± 0.047 | 0.90 ± 0.04 | 0.91 ± 0.031 | **0.98 ± 0.019** | -->
+![graph](graph2.png)
 
 - Our model achieves SOTA results on both DAS and Correspondence
 
@@ -398,11 +488,11 @@ We explore how **interpolation in latent space** correspond to **continuous chan
 # Grasp Transfer via Keypoint Correspondence and Differentiable Simulation
 
 
+![overview](overview3.png)
 
-
-- ![1](https://icongr.am/material/numeric-1-circle.svg?color=80EF80 'step') Extract 3D keypoints on both canonical and target objects
+<!-- - ![1](https://icongr.am/material/numeric-1-circle.svg?color=80EF80 'step') Extract 3D keypoints on both canonical and target objects
 - ![3](https://icongr.am/material/numeric-2-circle.svg?color=FFC067 'step') Transfer keypoints from the canonical object to the target instance via the keypoint space.
-- ![3](https://icongr.am/material/numeric-3-circle.svg?color=80EF80 'step') Jointly optimize the robot’s hand configuration and grasp stability through differentiable physics simulation, aligning fingertips with the transferred keypoints.
+- ![3](https://icongr.am/material/numeric-3-circle.svg?color=80EF80 'step') Jointly optimize the robot’s hand configuration and grasp stability through differentiable physics simulation, aligning fingertips with the transferred keypoints. -->
 
 ---
 
@@ -423,9 +513,19 @@ section p {
 
 D. Turpin et al., "Fast-Grasp'D: Dexterous Multi-finger Grasp Generation Through Differentiable Simulation," 2023 IEEE International Conference on Robotics and Automation (ICRA), London, United Kingdom, 2023, pp. 8082-8089, doi: 10.1109/ICRA48891.2023.10160314.
 
+<!-- ---
+
+## Overall Pipeline
+
+1. Get hand and object pose from example.
+2. Calculate keypoints on example 
+3. Calculate keypoints on object to be grasped
+4. Optimize grasp to match keypoints and produce a stable grasp.  -->
+
 ---
 
-## What is done.
+
+## What is done
 <style scoped>
 
 section p {
@@ -434,15 +534,86 @@ section p {
 </style>
 
 - Can transfer grasp using keypoints from human to robot on *same object instance*
-- Achieved using a hungarian matching based loss term to assign fingers to keypoints.
-- We use the differentiable simulation engine Warp (Macklin, 2022)
+  - Transferring across embodiments!
+- Achieved using a pure optimziation based approach
+- We use the differentiable simulator Warp (Macklin, 2022)
 
-![demo](demo.gif)
+
+
+![demo](output_10.gif)
 
 <p>M. Macklin, “Warp: A high-performance python framework for gpu simulation and graphics,” in NVIDIA
 GPU Technology Conference (GTC), vol. 3, 2022.</p>
 
 ---
+
+## Loss Function
+
+- **Grasp’D objective**
+  - Optimizes grasp stability and penalizes hand-object collision
+
+- **Hungarian keypoint assignment**
+  - Matches key points points to finger links using a hungarian matching algorithm
+  - Supports different numbers and layouts of contact points
+
+- **Self-collision penalty**
+  - Penalizes self-intersections seen in Fast-Grasp’D
+---
+
+## Metrics
+
+<style scoped>
+section p {
+  text-align: center;
+}
+</style>
+
+- Intersecting Volume — How much intersection between object and hand?
+- Contact Area — How much contact between object and hand?
+- Force Closure — Can it resist external force/moment?
+- ε (Ferrari–Canny) — grasp robustness margin (not validated yet)
+
+![ca](contact_area_example.png)
+*Example of a contact area calculation*
+
+---
+
+## Example Result
+
+<!-- ![output](output_10.gif)
+![output](output_10.png)
+![output](intersecting_volume.png)
+![output](contact_area.png) -->
+
+
+<!-- <hr style="border:2px dashed blue;">
+**Blue dashed line** = when the algorithm achieves force closure
+</hr> -->
+
+
+- We want to maximize contact area, and minimize intersecting volume
+- Minimzie distance between keypoints and finger tips! i.e., We matched the demonstration!
+- <span style="display:inline-block; width:45px; border-bottom:3px dashed blue; vertical-align:middle;"></span>&nbsp;&nbsp;&nbsp;   When the algorithm achieves force closure
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+
+<div style="display:flex; justify-content:center; align-items:center;">
+<img src="output_10.gif" height="230">
+</div>
+
+<div style="display:flex; justify-content:center; align-items:center;">
+<img src="output_10.png" height="230">
+</div>
+
+<div style="display:flex; justify-content:center; align-items:center;">
+<img src="intersecting_volume.png" height="230">
+</div>
+
+<div style="display:flex; justify-content:center; align-items:center;">
+<img src="contact_area.png" height="230">
+</div>
+---
+
 ## What is left?
 
 - Combine with the keypoint discovery to enable grasp transfer across object instances within a class.
